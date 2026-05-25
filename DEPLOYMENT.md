@@ -19,16 +19,19 @@ npm run deploy
 `Workers & Pages`에서 Pages 정적 사이트로 만들지 말고, Workers 쪽에서 GitHub 저장소를 연결합니다.
 
 - Repository: `darktemfirex/blogCreater`
-- Build command: 비워두거나 `npm run cf:build`
-- Deploy command: `npx wrangler deploy`
+- Build command: `npm run cf:build`
+- Deploy command: `npm run cf:deploy`
 - Node.js version: `22` 또는 `20`
 - Secret: `OPENAI_API_KEY`
 
 `OPENAI_TEXT_MODEL`, `OPENAI_IMAGE_MODEL`은 `wrangler.toml`의 `[vars]`에 들어 있습니다.
 
-중요: Build command에 `npm run build`만 넣으면 안 됩니다. `npm run build`는 Next.js 빌드만 수행하므로
+중요: Cloudflare 대시보드의 Build command에 `npm run build`만 넣으면 안 됩니다. `npm run build`는 Next.js 빌드만 수행하므로
 OpenNext 배포에 필요한 `.open-next/.build/open-next.config.edge.mjs`가 생성되지 않습니다.
 이 경우 deploy 단계에서 `Could not find compiled Open Next config` 오류가 납니다.
+
+이미 Cloudflare 프로젝트를 만든 뒤라면 GitHub 코드만 바꿔도 대시보드의 Build command가 자동으로 바뀌지 않을 수 있습니다.
+Cloudflare 프로젝트 설정에서 Build command를 직접 `npm run cf:build`로 수정한 뒤 다시 배포하세요.
 
 ## 3. 왜 Pages 404가 나는가
 
