@@ -1,11 +1,16 @@
 export const BLOG_RULES = `
 출력은 JSON만 반환해.
-필드는 title, summary, marketPoints, strategyPoints, caution, tags를 사용해.
-marketPoints와 strategyPoints는 각각 문자열 2개 배열이야.
-tags는 문자열 5개 배열이며 #으로 시작해.
+필드는 title, summary, indexSnapshot, marketPoints, strategyPoints, caution, tags를 사용해.
+indexSnapshot은 미국 3대 지수인 나스닥, S&P500, 다우존스의 최종 정규장 마감 정보를 담은 배열이야.
+indexSnapshot 각 항목은 name, close, change, changePercent 문자열 필드를 가져야 해.
+close는 최종 지수 수치, change는 전일 대비 등락폭, changePercent는 전일 대비 등락률이야.
+전날 미국 시장 데이터는 반드시 가장 최근 정규장 최종 마감 기준으로 확인해.
+장중 수치, 선물 지수, 프리마켓, 시간외 거래 수치를 최종 마감 수치처럼 쓰지 마.
+정확한 최종 마감 수치와 전일 대비 등락폭, 등락률을 확인할 수 없으면 숫자를 지어내지 말고 해당 항목에 "확인 필요"라고 써.
 title은 먼저 생성한 본문 내용을 읽고 핵심을 요약해서 만든 블로그 제목이어야 해.
 summary는 본문 전체를 한 줄로 쉽게 요약해.
-marketPoints와 strategyPoints는 샘플 본문의 말투와 흐름을 참고하되, 최종 출력은 각각 딱 2개만 작성해.
+marketPoints와 strategyPoints는 각각 문자열 2개 배열이야.
+tags는 문자열 5개 배열이며 #으로 시작해.
 문장은 고등학생도 이해할 수 있게 쉽게 쓰고, 어려운 경제용어는 풀어서 설명해.
 특정 종목을 강하게 추천하거나 매수/매도 지시를 하지 마.
 투자 유의사항은 1줄만 작성해.
@@ -13,7 +18,9 @@ marketPoints와 strategyPoints는 샘플 본문의 말투와 흐름을 참고하
 `;
 
 export const MORNING_PROMPT = `
-전날 미국증시와 오늘 한국증시 전망을 고등학생도 이해할 수 있게 500자 내외로 작성해줘.
+가장 최근 정규장 최종 마감 기준의 전날 미국 시장을 요약해줘.
+나스닥, S&P500, 다우존스의 최종 마감 지수 수치, 전일 대비 등락폭, 등락률을 정확히 포함해줘.
+전날 미국증시 흐름과 오늘 한국증시에 줄 수 있는 영향을 고등학생도 이해할 수 있게 500자 내외로 작성해줘.
 시황 포인트는 딱 2개, 투자 전략은 딱 2개만 작성해줘.
 제목은 생성된 본문 내용을 요약해서 만들어줘.
 특정 종목을 강하게 추천하지 마.

@@ -1,6 +1,14 @@
+export type IndexSnapshot = {
+  name: string;
+  close: string;
+  change: string;
+  changePercent: string;
+};
+
 export type BlogDraft = {
   title: string;
   summary: string;
+  indexSnapshot: IndexSnapshot[];
   marketPoints: string[];
   strategyPoints: string[];
   caution: string;
@@ -16,6 +24,7 @@ export function normalizeDraft(input: Partial<BlogDraft>): BlogDraft {
   return {
     title: cleanText(input.title) || "Money Pick 오늘의 시황",
     summary: cleanText(input.summary) || "오늘 시장의 핵심 흐름을 쉽게 정리했습니다.",
+    indexSnapshot: toIndexSnapshot(input.indexSnapshot),
     marketPoints: toTwoItems(input.marketPoints),
     strategyPoints: toTwoItems(input.strategyPoints),
     caution:
@@ -29,6 +38,12 @@ export function formatForNaver(input: BlogDraft): FormattedBlogDraft {
   const draft = normalizeDraft(input);
   const body = [
     `한줄 요약: ${draft.summary}`,
+    "",
+    "미국 3대 지수 최종 마감",
+    "지수 | 마감 수치 | 전일 대비 등락폭 | 등락률",
+    ...draft.indexSnapshot.map(
+      (item) => `${item.name} | ${item.close} | ${item.change} | ${item.changePercent}`
+    ),
     "",
     "시황 포인트",
     `1. ${draft.marketPoints[0]}`,
@@ -63,8 +78,31 @@ function toTwoItems(value: unknown): string[] {
   ];
 }
 
+function toIndexSnapshot(value: unknown): IndexSnapshot[] {
+  const defaults = [
+    { name: "나스닥", close: "확인 필요", change: "확인 필요", changePercent: "확인 필요" },
+    { name: "S&P500", close: "확인 필요", change: "확인 필요", changePercent: "확인 필요" },
+    { name: "다우존스", close: "확인 필요", change: "확인 필요", changePercent: "확인 필요" }
+  ];
+
+  if (!Array.isArray(value)) {
+    return defaults;
+  }
+
+  return defaults.map((fallback, index) => {
+    const item = value[index] as Partial<IndexSnapshot> | undefined;
+
+    return {
+      name: cleanText(item?.name) || fallback.name,
+      close: cleanText(item?.close) || fallback.close,
+      change: cleanText(item?.change) || fallback.change,
+      changePercent: cleanText(item?.changePercent) || fallback.changePercent
+    };
+  });
+}
+
 function toFiveTags(value: unknown): string[] {
-  const defaults = ["#MoneyPick", "#주식시황", "#초보투자", "#국내증시", "#경제공부"];
+  const defaults = ["#MoneyPick", "#주식시황", "#미국증시", "#초보투자", "#경제공부"];
   const tags = Array.isArray(value)
     ? value.map(cleanText).filter(Boolean)
     : [];
