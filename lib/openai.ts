@@ -1,4 +1,5 @@
 import { BLOG_RULES } from "./prompts";
+import { SAMPLE_ARTICLE } from "./sampleArticle";
 import { formatForNaver, type BlogDraft, type FormattedBlogDraft } from "./naverFormatter";
 
 const OPENAI_API_URL = "https://api.openai.com/v1/responses";
@@ -18,7 +19,12 @@ type OpenAITextResponse = {
 export async function generateBlogDraft(prompt: string): Promise<FormattedBlogDraft> {
   const response = await callOpenAI({
     model: process.env.OPENAI_TEXT_MODEL || "gpt-5.2",
-    input: `${BLOG_RULES}\n\n${prompt}`
+    input: [
+      BLOG_RULES,
+      "아래 샘플 본문의 말투, 문단 흐름, 쉬운 설명 방식을 참고해. 단, 샘플 내용을 그대로 베끼지 말고 현재 요청에 맞게 새로 작성해.",
+      `<샘플 본문>\n${SAMPLE_ARTICLE}\n</샘플 본문>`,
+      prompt
+    ].join("\n\n")
   });
 
   const text = extractText(response);
