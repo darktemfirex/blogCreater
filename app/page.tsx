@@ -89,16 +89,18 @@ export default function Home() {
     <main className="page">
       <div className="shell">
         <header className="topbar">
-          <div>
-            <h1 className="title">Money Pick 블로그 생성기</h1>
-            <p className="subtitle">생성 결과는 저장되지 않고 현재 화면에만 표시됩니다.</p>
+          <div className="headingGroup">
+            <p className="eyebrow">Money Pick</p>
+            <h1 className="title">블로그 생성기</h1>
+            <p className="subtitle">생성 결과는 저장되지 않고 현재 화면에서만 복사하거나 다운로드할 수 있습니다.</p>
           </div>
           <div className="status" aria-live="polite">
+            <span className={loading ? "statusDot active" : "statusDot"} />
             {statusText}
           </div>
         </header>
 
-        <section className="actions" aria-label="생성 버튼">
+        <section className="commandBar" aria-label="시황 생성">
           <button
             className="primaryButton"
             disabled={Boolean(loading)}
@@ -118,7 +120,7 @@ export default function Home() {
         {error ? <div className="error">{error}</div> : null}
 
         <div className="workspace">
-          <section className="panel" aria-label="생성된 글">
+          <section className="panel articlePanel" aria-label="생성된 블로그 글">
             <div className="panelHeader">
               <h2 className="panelTitle">블로그 글</h2>
               <div className="copyGrid">
@@ -167,7 +169,7 @@ export default function Home() {
                 />
               </label>
 
-              <label className="field">
+              <label className="field lastField">
                 <span className="label">생성된 태그</span>
                 <textarea
                   className="readonly tagBox"
@@ -179,8 +181,8 @@ export default function Home() {
             </div>
           </section>
 
-          <aside className="panel" aria-label="대표 이미지">
-            <div className="panelHeader">
+          <aside className="panel imagePanel" aria-label="대표 이미지">
+            <div className="panelHeader compactHeader">
               <h2 className="panelTitle">대표 이미지</h2>
             </div>
 
@@ -194,11 +196,7 @@ export default function Home() {
               </div>
 
               <div className="imageActions">
-                <button
-                  className="ghostButton"
-                  disabled={!imageDataUrl}
-                  onClick={downloadImage}
-                >
+                <button className="ghostButton" disabled={!imageDataUrl} onClick={downloadImage}>
                   이미지 다운로드
                 </button>
                 <button
