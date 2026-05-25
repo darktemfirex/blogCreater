@@ -7,6 +7,9 @@ compatibility_flags = ["nodejs_compat"]
 directory = ".open-next/assets"
 binding = "ASSETS"
 
+[build]
+command = "npm run cf:build"
+
 [vars]
 OPENAI_TEXT_MODEL = "gpt-5.2"
 OPENAI_IMAGE_MODEL = "gpt-5.2"
