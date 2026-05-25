@@ -8,35 +8,29 @@ type Draft = {
   tagText: string;
 };
 
-type GenerateMode = "morning" | "closing";
-
 const NAVER_WRITE_URL = "https://blog.naver.com/GoBlogWrite.naver";
 
 export default function Home() {
   const [draft, setDraft] = useState<Draft | null>(null);
   const [imageDataUrl, setImageDataUrl] = useState("");
-  const [loading, setLoading] = useState<GenerateMode | null>(null);
+  const [loading, setLoading] = useState(false);
   const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
 
   const statusText = useMemo(() => {
-    if (loading === "morning") return "오전 시황 생성 중...";
-    if (loading === "closing") return "오후 마감 시황 생성 중...";
+    if (loading) return "전날 미국 시장 요약 생성 중...";
     if (draft) return "생성 완료";
     return "대기 중";
   }, [draft, loading]);
 
-  async function generate(mode: GenerateMode) {
-    setLoading(mode);
+  async function generate() {
+    setLoading(true);
     setNotice("");
     setError("");
 
     try {
-      const articleEndpoint =
-        mode === "morning" ? "/api/generate/morning" : "/api/generate/closing";
-
       const [articleResponse, imageResponse] = await Promise.all([
-        fetch(articleEndpoint, { method: "POST" }),
+        fetch("/api/generate/morning", { method: "POST" }),
         fetch("/api/generate/image", { method: "POST" })
       ]);
 
@@ -60,7 +54,7 @@ export default function Home() {
     } catch (generateError) {
       setError(generateError instanceof Error ? generateError.message : "생성에 실패했습니다.");
     } finally {
-      setLoading(null);
+      setLoading(false);
     }
   }
 
@@ -103,17 +97,10 @@ export default function Home() {
         <section className="commandBar" aria-label="시황 생성">
           <button
             className="primaryButton"
-            disabled={Boolean(loading)}
-            onClick={() => generate("morning")}
+            disabled={loading}
+            onClick={generate}
           >
-            오전 시황 생성
-          </button>
-          <button
-            className="secondaryButton"
-            disabled={Boolean(loading)}
-            onClick={() => generate("closing")}
-          >
-            오후 마감 시황 생성
+            전날 미국 시장 요약
           </button>
         </section>
 
